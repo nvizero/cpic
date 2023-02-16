@@ -24,6 +24,7 @@ func NewServer(store db.Store) *Server {
 
 	router.LoadHTMLGlob("view/*.tmpl")
 	router.Static("/assetPath", "./asset")
+
 	router.Use(cors.New(cors.Config{
 		AllowOriginFunc:  func(origin string) bool { return true },
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "PATCH"},
@@ -54,6 +55,7 @@ func NewServer(store db.Store) *Server {
 			arg := db.CreatePostParams{
 				Title: sql.NullString{String: row.Title, Valid: true},
 				Link:  sql.NullString{String: row.Link, Valid: true},
+				State: sql.NullBool{Bool: false, Valid: true},
 				Img:   row.Img,
 			}
 			server.store.CreatePost(context.Background(), arg)
