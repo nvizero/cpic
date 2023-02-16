@@ -3,6 +3,7 @@ package service
 import (
 	bot "cpic/bot"
 	"cpic/model"
+	"fmt"
 )
 
 var sbot bot.Crawler
@@ -22,5 +23,6 @@ func WebSeseav() []model.Sex51 {
 	sbot.Fetch()
 	sbot.JContent()
 	alinks := bot.GetIndex(sbot.Body, "a")
+	fmt.Println("--", alinks)
 	return alinks
 }

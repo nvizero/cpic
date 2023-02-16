@@ -16,7 +16,7 @@ func TestCreatePost(t *testing.T) {
 	arg := CreatePostParams{
 		Title:   sql.NullString{String: util.RandomString(21), Valid: true},
 		Link:    sql.NullString{String: util.RandomString(21), Valid: true},
-		Img:     util.RandomString(41),
+		Img:     util.RandomString(21),
 		Content: util.RandomString(19),
 	}
 
