@@ -1,0 +1,38 @@
+.out{
+    width: 100%;
+    margin: 1em auto;
+    display: flex;
+    justify-content: center;
+}
+
+.out{
+    width: 95%;
+    display:flex;
+    flex-wrap:nowrap;
+    flex-direction:row
+}
+
+.inside {
+    display:flex;
+}
+
+.flex-container {
+    width: 95%;
+    flex-direction: row;
+    display: flex;
+    flex-wrap:wrap;
+}
+
+.flex-items {
+    width:180px;
+}
+
+.flex-items a{
+    display:flex;
+    width:180px;
+}
+
+body{
+
+    font-size:16px;
+}
