@@ -2,22 +2,25 @@
 <link href="http://51sex.vip/Content/global/default/font/font.css" rel="stylesheet" />
 <link href="http://51sex.vip/Content/global/default/css6.css?v=15" rel="stylesheet" />
 
-
 <div class="headling_main">
    {{ range  $value := .datas }}
       <a href="/doc?id={{ $value.Link }}">
          <div class="headling_main_box">
+
             <div class="headling_main_box_right">
                <img class="headling_main_box_image" src="{{ $value.Img }}">
             </div>
 
             <div class="headling_main_box_left">
+
                <div class="headling_main_box_title">
                   {{ $value.Title }}
                </div>
+
                <div class="headling_main_box_time">
                   {{ $value.Date }}
                </div>
+
             </div>
 
          </div>
