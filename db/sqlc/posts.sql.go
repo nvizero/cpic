@@ -15,16 +15,18 @@ INSERT INTO posts (
   title,
   link,
   img,
+  state,
   content
 ) VALUES (
-  $1, $2, $3, $4
-) RETURNING id, title, link, img, content, created_at
+  $1, $2, $3, $4, $5
+) RETURNING id, title, link, state, img, content, created_at
 `
 
 type CreatePostParams struct {
 	Title   sql.NullString `json:"title"`
 	Link    sql.NullString `json:"link"`
 	Img     string         `json:"img"`
+	State   sql.NullBool   `json:"state"`
 	Content string         `json:"content"`
 }
 
@@ -33,6 +35,7 @@ func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, e
 		arg.Title,
 		arg.Link,
 		arg.Img,
+		arg.State,
 		arg.Content,
 	)
 	var i Post
@@ -40,6 +43,7 @@ func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, e
 		&i.ID,
 		&i.Title,
 		&i.Link,
+		&i.State,
 		&i.Img,
 		&i.Content,
 		&i.CreatedAt,
@@ -48,17 +52,18 @@ func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, e
 }
 
 const getPost = `-- name: GetPost :one
-SELECT id, title, link, img, content, created_at FROM posts
+SELECT id, title, link, state, img, content, created_at FROM posts
 WHERE id = $1 LIMIT 1
 `
 
-func (q *Queries) GetPost(ctx context.Context, id int32) (Post, error) {
+func (q *Queries) GetPost(ctx context.Context, id int64) (Post, error) {
 	row := q.queryRow(ctx, q.getPostStmt, getPost, id)
 	var i Post
 	err := row.Scan(
 		&i.ID,
 		&i.Title,
 		&i.Link,
+		&i.State,
 		&i.Img,
 		&i.Content,
 		&i.CreatedAt,
@@ -72,18 +77,20 @@ SET
   title = COALESCE($1, title),
   link = COALESCE($2, link),
   img = COALESCE($3, img),
-  content = COALESCE($4, content)
+  state = COALESCE($4, state),
+  content = COALESCE($5, content)
 WHERE
-  id = $5
-RETURNING id, title, link, img, content, created_at
+  id = $6
+RETURNING id, title, link, state, img, content, created_at
 `
 
 type UpdatePostParams struct {
 	Title   sql.NullString `json:"title"`
 	Link    sql.NullString `json:"link"`
 	Img     sql.NullString `json:"img"`
+	State   sql.NullBool   `json:"state"`
 	Content sql.NullString `json:"content"`
-	ID      int32          `json:"id"`
+	ID      int64          `json:"id"`
 }
 
 func (q *Queries) UpdatePost(ctx context.Context, arg UpdatePostParams) (Post, error) {
@@ -91,6 +98,7 @@ func (q *Queries) UpdatePost(ctx context.Context, arg UpdatePostParams) (Post, e
 		arg.Title,
 		arg.Link,
 		arg.Img,
+		arg.State,
 		arg.Content,
 		arg.ID,
 	)
@@ -99,6 +107,7 @@ func (q *Queries) UpdatePost(ctx context.Context, arg UpdatePostParams) (Post, e
 		&i.ID,
 		&i.Title,
 		&i.Link,
+		&i.State,
 		&i.Img,
 		&i.Content,
 		&i.CreatedAt,

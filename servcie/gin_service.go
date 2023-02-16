@@ -1,7 +1,10 @@
 package service
 
 import (
+	"context"
 	db "cpic/db/sqlc"
+	"database/sql"
+	"fmt"
 	"html/template"
 	"net/http"
 	"time"
@@ -29,16 +32,32 @@ func NewServer(store db.Store) *Server {
 		MaxAge:           12 * time.Hour,
 	}))
 
+	router.GET("/doc", func(c *gin.Context) {
+		id := c.Query("id")
+		arys := FetchDoc(id)
+		fmt.Println(id)
+		arg := db.UpdatePostParams{
+			Title:   sql.NullString{String: arys[0], Valid: true},
+			Content: sql.NullString{String: arys[2], Valid: true},
+			Link:    sql.NullString{String: id, Valid: true},
+		}
+		server.store.UpdatePost(context.Background(), arg)
+		c.HTML(http.StatusOK, "doc.tmpl", gin.H{
+			"content": template.HTML(arys[2]),
+			"title":   arys[0],
+			"time":    arys[1],
+		})
+	})
 	router.GET("/", func(c *gin.Context) {
 		sex51links := WebSeseav()
-		//for _, row := range sex51links {
-		//	arg := db.CreatePostParams{
-		//		Title: sql.NullString{String: row.Title, Valid: true},
-		//		Link:  sql.NullString{String: row.Link, Valid: true},
-		//		Img:   row.Img,
-		//	}
-		//	server.store.CreatePost(context.Background(), arg)
-		//}
+		for _, row := range sex51links {
+			arg := db.CreatePostParams{
+				Title: sql.NullString{String: row.Title, Valid: true},
+				Link:  sql.NullString{String: row.Link, Valid: true},
+				Img:   row.Img,
+			}
+			server.store.CreatePost(context.Background(), arg)
+		}
 		c.HTML(http.StatusOK, "index.tmpl", gin.H{
 			"datas": sex51links,
 			"baseu": "http://51sex.vip/",
