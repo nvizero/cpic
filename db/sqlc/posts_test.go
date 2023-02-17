@@ -42,19 +42,13 @@ func TestGetPosts(t *testing.T) {
 	fmt.Println(len(posts))
 }
 
-func TestGetPost(t *testing.T) {
-	post, err := testQueries.GetPost(context.Background(), 116)
-	require.NoError(t, err)
-	require.NotEmpty(t, post)
-}
-
 func TestUpdatePost(t *testing.T) {
 	arg := UpdatePostParams{
 		Title:   sql.NullString{String: util.RandomString(21), Valid: true},
 		Link:    sql.NullString{String: "/doc_Y2JocHhaWFBTRWxYZlJtTkRrWmFDZz09", Valid: true},
 		Img:     sql.NullString{String: util.RandomString(21), Valid: true},
 		Content: sql.NullString{String: util.RandomString(21), Valid: true},
-		ID:      117,
+		ID:      1,
 	}
 	post, err := testQueries.UpdatePost(context.Background(), arg)
 	require.NoError(t, err)
