@@ -49,6 +49,7 @@ func NewServer(store db.Store) *Server {
 			"time":    arys[1],
 		})
 	})
+
 	router.GET("/", func(c *gin.Context) {
 		sex51links := WebSeseav()
 		for _, row := range sex51links {

@@ -22,7 +22,8 @@ func main() {
 	}
 
 	store := db.NewStore(conn)
-	service.NewDBServer(store)
+	datas := service.NewDBServer(store)
+	service.CheckDataAndInsert(store, datas)
 }
 
 func ginserver() {

@@ -16,18 +16,20 @@ INSERT INTO posts (
   link,
   img,
   state,
-  content
+  content,
+  created_at
 ) VALUES (
-  $1, $2, $3, $4, $5
+  $1, $2, $3, $4, $5, $6
 ) RETURNING id, title, link, state, img, content, created_at
 `
 
 type CreatePostParams struct {
-	Title   sql.NullString `json:"title"`
-	Link    sql.NullString `json:"link"`
-	Img     string         `json:"img"`
-	State   sql.NullBool   `json:"state"`
-	Content string         `json:"content"`
+	Title     sql.NullString `json:"title"`
+	Link      sql.NullString `json:"link"`
+	Img       string         `json:"img"`
+	State     sql.NullBool   `json:"state"`
+	Content   string         `json:"content"`
+	CreatedAt sql.NullTime   `json:"created_at"`
 }
 
 func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, error) {
@@ -37,6 +39,7 @@ func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, e
 		arg.Img,
 		arg.State,
 		arg.Content,
+		arg.CreatedAt,
 	)
 	var i Post
 	err := row.Scan(
@@ -69,6 +72,41 @@ func (q *Queries) GetPost(ctx context.Context, id int64) (Post, error) {
 		&i.CreatedAt,
 	)
 	return i, err
+}
+
+const getPosts = `-- name: GetPosts :many
+SELECT id, title, link, state, img, content, created_at FROM posts
+`
+
+func (q *Queries) GetPosts(ctx context.Context) ([]Post, error) {
+	rows, err := q.query(ctx, q.getPostsStmt, getPosts)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Post{}
+	for rows.Next() {
+		var i Post
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Link,
+			&i.State,
+			&i.Img,
+			&i.Content,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const updatePost = `-- name: UpdatePost :one

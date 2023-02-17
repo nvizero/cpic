@@ -30,6 +30,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.getPostStmt, err = db.PrepareContext(ctx, getPost); err != nil {
 		return nil, fmt.Errorf("error preparing query GetPost: %w", err)
 	}
+	if q.getPostsStmt, err = db.PrepareContext(ctx, getPosts); err != nil {
+		return nil, fmt.Errorf("error preparing query GetPosts: %w", err)
+	}
 	if q.updatePostStmt, err = db.PrepareContext(ctx, updatePost); err != nil {
 		return nil, fmt.Errorf("error preparing query UpdatePost: %w", err)
 	}
@@ -46,6 +49,11 @@ func (q *Queries) Close() error {
 	if q.getPostStmt != nil {
 		if cerr := q.getPostStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing getPostStmt: %w", cerr)
+		}
+	}
+	if q.getPostsStmt != nil {
+		if cerr := q.getPostsStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getPostsStmt: %w", cerr)
 		}
 	}
 	if q.updatePostStmt != nil {
@@ -94,6 +102,7 @@ type Queries struct {
 	tx             *sql.Tx
 	createPostStmt *sql.Stmt
 	getPostStmt    *sql.Stmt
+	getPostsStmt   *sql.Stmt
 	updatePostStmt *sql.Stmt
 }
 
@@ -103,6 +112,7 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		tx:             tx,
 		createPostStmt: q.createPostStmt,
 		getPostStmt:    q.getPostStmt,
+		getPostsStmt:   q.getPostsStmt,
 		updatePostStmt: q.updatePostStmt,
 	}
 }
