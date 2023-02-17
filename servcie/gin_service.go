@@ -43,7 +43,7 @@ func Routes(store db.Store) {
 		arg := db.UpdatePostParams{
 			Link:    sql.NullString{String: id, Valid: true},
 			State:   sql.NullBool{Bool: true, Valid: true},
-			Content: sql.NullString{String: strings.Trim(arys[2], ""), Valid: true},
+			Content: sql.NullString{String: strings.TrimSpace(arys[2]), Valid: true},
 		}
 		store.UpdatePost(context.Background(), arg)
 		c.HTML(http.StatusOK, "doc.tmpl", gin.H{
