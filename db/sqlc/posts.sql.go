@@ -118,7 +118,7 @@ SET
   state = COALESCE($4, state),
   content = COALESCE($5, content)
 WHERE
-  id = $6
+  link = $2
 RETURNING id, title, link, state, img, content, created_at
 `
 
@@ -128,7 +128,6 @@ type UpdatePostParams struct {
 	Img     sql.NullString `json:"img"`
 	State   sql.NullBool   `json:"state"`
 	Content sql.NullString `json:"content"`
-	ID      int64          `json:"id"`
 }
 
 func (q *Queries) UpdatePost(ctx context.Context, arg UpdatePostParams) (Post, error) {
@@ -138,7 +137,6 @@ func (q *Queries) UpdatePost(ctx context.Context, arg UpdatePostParams) (Post, e
 		arg.Img,
 		arg.State,
 		arg.Content,
-		arg.ID,
 	)
 	var i Post
 	err := row.Scan(

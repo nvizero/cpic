@@ -26,5 +26,5 @@ SET
   state = COALESCE(sqlc.narg(state), state),
   content = COALESCE(sqlc.narg(content), content)
 WHERE
-  id = sqlc.arg(id)
+  link = sqlc.arg(link)
 RETURNING *;

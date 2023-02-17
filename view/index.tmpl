@@ -4,7 +4,7 @@
 
 <div class="headling_main">
    {{ range  $value := .datas }}
-      <a href="/doc?id={{ $value.Link }}">
+      <a href="/doc?id={{ $value.Link.String }}">
          <div class="headling_main_box">
 
             <div class="headling_main_box_right">
@@ -14,11 +14,10 @@
             <div class="headling_main_box_left">
 
                <div class="headling_main_box_title">
-                  {{ $value.Title }}
+                  {{ $value.Title.String }}
                </div>
 
                <div class="headling_main_box_time">
-                  {{ $value.Date }}
                </div>
 
             </div>

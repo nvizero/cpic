@@ -22,8 +22,9 @@ func main() {
 	}
 
 	store := db.NewStore(conn)
-	datas := service.NewDBServer(store)
-	service.CheckDataAndInsert(store, datas)
+	links := service.NewDBServer(store)
+	service.CheckDataAndInsert(store, links)
+	service.Routes(store)
 }
 
 func ginserver() {
@@ -40,8 +41,9 @@ func ginserver() {
 	}
 
 	store := db.NewStore(conn)
-	server := service.NewServer(store)
-	err = server.Start(config.HTTPServerAddress)
+	datas := service.NewDBServer(store)
+	service.CheckDataAndInsert(store, datas)
+
 	if err != nil {
 		log.Fatal("cannot start server :", err)
 	}
