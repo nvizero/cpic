@@ -16,6 +16,7 @@ type Crawler struct {
 	BaseUrl          string
 	Name             string
 	Content          string
+	Type             string
 	Body             []byte
 	NovelLinks       []model.Link
 	EnableNovelLinks []model.Link
@@ -45,7 +46,12 @@ func (c *Crawler) Fetch() *Crawler {
 
 // 取內容
 func (c *Crawler) ParseContent(dom string, removeDom string) *Crawler {
-	content := GetContent(c.Body)
+	var content []string
+	if c.Type == "17sex" {
+		content = Get17SexContent(c.Body)
+	} else {
+		content = Get51SexContent(c.Body)
+	}
 	c.Content = content[2]
 	return c
 }

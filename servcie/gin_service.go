@@ -4,6 +4,7 @@ import (
 	"context"
 	db "cpic/db/sqlc"
 	"database/sql"
+	"fmt"
 	"html/template"
 	"net/http"
 	"strings"
@@ -39,7 +40,13 @@ func Routes(store db.Store) {
 
 	r.GET("/doc", func(c *gin.Context) {
 		id := c.Query("id")
-		arys := FetchDoc(id)
+		fmt.Println("id ->>>>", id)
+		var arys []string
+		if strings.Contains(id, "17sex") {
+			arys = FetchDoc(id, "q17sex")
+		} else {
+			arys = FetchDoc(id, "q51sex")
+		}
 		arg := db.UpdatePostParams{
 			Link:    sql.NullString{String: id, Valid: true},
 			State:   sql.NullBool{Bool: true, Valid: true},

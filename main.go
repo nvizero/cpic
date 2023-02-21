@@ -11,25 +11,23 @@ import (
 )
 
 func main() {
+	links := service.Handle()
 	config, err := util.LoadConfig(".")
 	if err != nil {
 		log.Fatal("cannot load config:", err)
 	}
-
 	conn, err := sql.Open(config.DBDriver, config.DBSource)
 	if err != nil {
-		log.Fatal("cannot connect to db: ???", err)
+		log.Fatal("cannot connect to db: ", err)
 	}
-
 	store := db.NewStore(conn)
-	links := service.NewDBServer(store)
 	service.CheckDataAndInsert(store, links)
 	service.Routes(store)
 }
 
 func ginserver() {
 	//service.Routes()
-	//service.WebSeseav()
+	//go service.Handle()
 	config, err := util.LoadConfig(".")
 	if err != nil {
 		log.Fatal("cannot load config:", err)
@@ -41,7 +39,7 @@ func ginserver() {
 	}
 
 	store := db.NewStore(conn)
-	datas := service.NewDBServer(store)
+	datas := service.Handle()
 	service.CheckDataAndInsert(store, datas)
 
 	if err != nil {

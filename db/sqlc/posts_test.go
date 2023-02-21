@@ -18,6 +18,7 @@ func TestCreatePost(t *testing.T) {
 		Title:     sql.NullString{String: util.RandomString(21), Valid: true},
 		Link:      sql.NullString{String: util.RandomString(21), Valid: true},
 		State:     sql.NullBool{Bool: false, Valid: true},
+		Dt:        sql.NullString{String: util.RandomString(21), Valid: true},
 		Img:       util.RandomString(21),
 		Content:   util.RandomString(25),
 		CreatedAt: sql.NullTime{Time: time.Now(), Valid: true},

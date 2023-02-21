@@ -3,11 +3,12 @@ INSERT INTO posts (
   title,
   link,
   img,
+  dt,
   state,
   content,
   created_at
 ) VALUES (
-  $1, $2, $3, $4, $5, $6
+  $1, $2, $3, $4, $5, $6, $7
 ) RETURNING *;
 
 -- name: GetPost :one
@@ -23,6 +24,7 @@ SET
   title = COALESCE(sqlc.narg(title), title),
   link = COALESCE(sqlc.narg(link), link),
   img = COALESCE(sqlc.narg(img), img),
+  dt = COALESCE(sqlc.narg(dt), dt),
   state = COALESCE(sqlc.narg(state), state),
   content = COALESCE(sqlc.narg(content), content)
 WHERE

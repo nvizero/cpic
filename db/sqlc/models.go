@@ -12,6 +12,7 @@ type Post struct {
 	ID        int64          `json:"id"`
 	Title     sql.NullString `json:"title"`
 	Link      sql.NullString `json:"link"`
+	Dt        sql.NullString `json:"dt"`
 	State     sql.NullBool   `json:"state"`
 	Img       string         `json:"img"`
 	Content   string         `json:"content"`

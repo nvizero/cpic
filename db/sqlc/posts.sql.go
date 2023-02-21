@@ -15,18 +15,20 @@ INSERT INTO posts (
   title,
   link,
   img,
+  dt,
   state,
   content,
   created_at
 ) VALUES (
-  $1, $2, $3, $4, $5, $6
-) RETURNING id, title, link, state, img, content, created_at
+  $1, $2, $3, $4, $5, $6, $7
+) RETURNING id, title, link, dt, state, img, content, created_at
 `
 
 type CreatePostParams struct {
 	Title     sql.NullString `json:"title"`
 	Link      sql.NullString `json:"link"`
 	Img       string         `json:"img"`
+	Dt        sql.NullString `json:"dt"`
 	State     sql.NullBool   `json:"state"`
 	Content   string         `json:"content"`
 	CreatedAt sql.NullTime   `json:"created_at"`
@@ -37,6 +39,7 @@ func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, e
 		arg.Title,
 		arg.Link,
 		arg.Img,
+		arg.Dt,
 		arg.State,
 		arg.Content,
 		arg.CreatedAt,
@@ -46,6 +49,7 @@ func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, e
 		&i.ID,
 		&i.Title,
 		&i.Link,
+		&i.Dt,
 		&i.State,
 		&i.Img,
 		&i.Content,
@@ -55,7 +59,7 @@ func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, e
 }
 
 const getPost = `-- name: GetPost :one
-SELECT id, title, link, state, img, content, created_at FROM posts
+SELECT id, title, link, dt, state, img, content, created_at FROM posts
 WHERE id = $1 LIMIT 1
 `
 
@@ -66,6 +70,7 @@ func (q *Queries) GetPost(ctx context.Context, id int64) (Post, error) {
 		&i.ID,
 		&i.Title,
 		&i.Link,
+		&i.Dt,
 		&i.State,
 		&i.Img,
 		&i.Content,
@@ -75,7 +80,7 @@ func (q *Queries) GetPost(ctx context.Context, id int64) (Post, error) {
 }
 
 const getPosts = `-- name: GetPosts :many
-SELECT id, title, link, state, img, content, created_at FROM posts
+SELECT id, title, link, dt, state, img, content, created_at FROM posts
 `
 
 func (q *Queries) GetPosts(ctx context.Context) ([]Post, error) {
@@ -91,6 +96,7 @@ func (q *Queries) GetPosts(ctx context.Context) ([]Post, error) {
 			&i.ID,
 			&i.Title,
 			&i.Link,
+			&i.Dt,
 			&i.State,
 			&i.Img,
 			&i.Content,
@@ -115,17 +121,19 @@ SET
   title = COALESCE($1, title),
   link = COALESCE($2, link),
   img = COALESCE($3, img),
-  state = COALESCE($4, state),
-  content = COALESCE($5, content)
+  dt = COALESCE($4, dt),
+  state = COALESCE($5, state),
+  content = COALESCE($6, content)
 WHERE
   link = $2
-RETURNING id, title, link, state, img, content, created_at
+RETURNING id, title, link, dt, state, img, content, created_at
 `
 
 type UpdatePostParams struct {
 	Title   sql.NullString `json:"title"`
 	Link    sql.NullString `json:"link"`
 	Img     sql.NullString `json:"img"`
+	Dt      sql.NullString `json:"dt"`
 	State   sql.NullBool   `json:"state"`
 	Content sql.NullString `json:"content"`
 }
@@ -135,6 +143,7 @@ func (q *Queries) UpdatePost(ctx context.Context, arg UpdatePostParams) (Post, e
 		arg.Title,
 		arg.Link,
 		arg.Img,
+		arg.Dt,
 		arg.State,
 		arg.Content,
 	)
@@ -143,6 +152,7 @@ func (q *Queries) UpdatePost(ctx context.Context, arg UpdatePostParams) (Post, e
 		&i.ID,
 		&i.Title,
 		&i.Link,
+		&i.Dt,
 		&i.State,
 		&i.Img,
 		&i.Content,
