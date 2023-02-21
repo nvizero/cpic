@@ -3,6 +3,7 @@ package bot
 import (
 	"bytes"
 	"cpic/model"
+	"fmt"
 	"log"
 	"strings"
 
@@ -32,6 +33,10 @@ func Get17SexContent(body []byte) []string {
 	doc.Find(".news-item").Remove()
 	doc.Find("style").Remove()
 	doc.Find("script").Remove()
+	doc.Find("img").Each(func(i int, s *goquery.Selection) {
+		src, _ := s.Attr("src")
+		fmt.Println(src)
+	})
 	sexCont.Content = doc.Find(dom).Text()
 	html, _ := doc.Find(dom).Html()
 	s := []string{title, time, html}
@@ -51,6 +56,10 @@ func Get51SexContent(body []byte) []string {
 	doc.Find("style").Remove()
 	doc.Find("script").Remove()
 	doc.Find("#compass-fit-4302731").Remove()
+	doc.Find("img").Each(func(i int, s *goquery.Selection) {
+		src, _ := s.Attr("src")
+		fmt.Println(src)
+	})
 	sexCont.Content = doc.Find(dom).Text()
 	html, _ := doc.Find(dom).Html()
 	s := []string{title, time, html}

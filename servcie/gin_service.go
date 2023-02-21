@@ -40,12 +40,13 @@ func Routes(store db.Store) {
 
 	r.GET("/doc", func(c *gin.Context) {
 		id := c.Query("id")
-		fmt.Println("id ->>>>", id)
 		var arys []string
 		if strings.Contains(id, "17sex") {
-			arys = FetchDoc(id, "q17sex")
+			fmt.Println("id 17171717171", id)
+			arys = FetchDoc(id, "17sex")
 		} else {
-			arys = FetchDoc(id, "q51sex")
+			fmt.Println("id 51515", id)
+			arys = FetchDoc(id, "51sex")
 		}
 		arg := db.UpdatePostParams{
 			Link:    sql.NullString{String: id, Valid: true},

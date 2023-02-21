@@ -14,10 +14,13 @@ import (
 var sbot bot.Crawler
 var baseUrl string = "http://51sex.vip"
 
+type SiteInfo struct {
+}
+
 func Handle() []model.Sex51 {
 	var collect []model.Sex51
 	var bases = []string{
-		"https://17sex.vip/Category/4584.html",
+		//"https://17sex.vip/Category/4584.html",
 		"http://51sex.vip",
 	}
 	for _, url := range bases {
@@ -39,15 +42,19 @@ func FetchMain(url string) []model.Sex51 {
 }
 
 func FetchDoc(url string, style string) []string {
+	if style == "51sex" {
+		url = "http://51sex.vip" + url
+	}
 	sbot.SetUrl(url)
 	sbot.Fetch()
 	sbot.JContent()
-	if strings.Contains(style, "51sex") {
+	if style == "51sex" {
 		sbot.Type = "http://51sex.vip"
+		return bot.Get51SexContent(sbot.Body)
 	} else {
 		sbot.Type = "https://17sex.vip"
+		return bot.Get17SexContent(sbot.Body)
 	}
-	return bot.Get17SexContent(sbot.Body)
 }
 
 // 跟資料庫比較 爬取的小說
