@@ -26,8 +26,6 @@ func main() {
 }
 
 func ginserver() {
-	//service.Routes()
-	//go service.Handle()
 	config, err := util.LoadConfig(".")
 	if err != nil {
 		log.Fatal("cannot load config:", err)

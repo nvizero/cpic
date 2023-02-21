@@ -15,11 +15,16 @@ var sbot bot.Crawler
 var baseUrl string = "http://51sex.vip"
 
 func Handle() []model.Sex51 {
-	var baseu = []string{
-		"http://51sex.vip",
+	var collect []model.Sex51
+	var bases = []string{
 		"https://17sex.vip/Category/4584.html",
+		"http://51sex.vip",
 	}
-	return FetchMain(baseu[1])
+	for _, url := range bases {
+		col := FetchMain(url)
+		collect = append(collect, col...)
+	}
+	return collect
 }
 
 func FetchMain(url string) []model.Sex51 {

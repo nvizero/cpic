@@ -27,7 +27,7 @@ func Get17SexContent(body []byte) []string {
 	if err != nil {
 		log.Fatal(err)
 	}
-	title := doc.Find(".entry-title").Text()
+	title := doc.Find("h1.cps-post-title.entry-title").Text()
 	time := doc.Find(".entry-date").Text()
 	doc.Find(".news-item").Remove()
 	doc.Find("style").Remove()
@@ -80,10 +80,13 @@ func Parse51SexIndex(body []byte, dom string) []model.Sex51 {
 			slink.Img = strings.TrimSpace(link)
 			//fmt.Println("img  : ", link)
 		})
-		sex51links = append(sex51links, slink)
+		if len(slink.Title) > 1 && rmLink(link) {
+			sex51links = append(sex51links, slink)
+		}
 	})
 	return sex51links
 }
+
 func Parse17SexIndex(body []byte, dom string) []model.Sex51 {
 	doc, err := goquery.NewDocumentFromReader(bytes.NewReader(body))
 	if err != nil {
@@ -105,9 +108,21 @@ func Parse17SexIndex(body []byte, dom string) []model.Sex51 {
 			slink.Img = strings.TrimSpace(link)
 			//fmt.Println("img  : ", link)
 		})
-		if len(slink.Title) > 1 {
+		if len(slink.Title) > 1 && rmLink(link) {
 			sex51links = append(sex51links, slink)
 		}
 	})
 	return sex51links
+}
+
+func rmLink(link string) bool {
+	var outStrs = []string{"inks", "about", "email", "javascript"}
+	var fj bool = true
+	for _, str := range outStrs {
+		if strings.Contains(link, str) {
+			fj = false
+		}
+	}
+	return fj
+
 }
