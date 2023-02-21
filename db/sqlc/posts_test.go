@@ -45,7 +45,7 @@ func TestGetPosts(t *testing.T) {
 
 func TestUpdatePost(t *testing.T) {
 	arg := UpdatePostParams{
-		Link:    sql.NullString{String: "/doc_Y2JocHhaWFBTRWxYZlJtTkRrWmFDZz09", Valid: true},
+		Link:    sql.NullString{String: "https://17sex.vip/doc_NlgramdUUXlsd0pVdXcxclB5ZjFiZz09", Valid: true},
 		Content: sql.NullString{String: util.RandomString(21), Valid: true},
 	}
 	post, err := testQueries.UpdatePost(context.Background(), arg)
