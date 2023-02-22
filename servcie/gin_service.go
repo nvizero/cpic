@@ -4,7 +4,6 @@ import (
 	"context"
 	db "cpic/db/sqlc"
 	"database/sql"
-	"fmt"
 	"html/template"
 	"net/http"
 	"strings"
@@ -30,6 +29,7 @@ func Routes(store db.Store) {
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
 	}))
+
 	r.GET("/", func(c *gin.Context) {
 		sex51links, _ := store.GetPosts(context.Background())
 		c.HTML(http.StatusOK, "index.tmpl", gin.H{
@@ -40,13 +40,12 @@ func Routes(store db.Store) {
 
 	r.GET("/doc", func(c *gin.Context) {
 		id := c.Query("id")
+		doc := c.Query("doc")
 		var arys []string
-		if strings.Contains(id, "17sex") {
-			fmt.Println("id 17171717171", id)
-			arys = FetchDoc(id, "17sex")
+		if strings.Contains(doc, "17sex") {
+			arys = FetchDoc(doc, "17sex", id)
 		} else {
-			fmt.Println("id 51515", id)
-			arys = FetchDoc(id, "51sex")
+			arys = FetchDoc(doc, "51sex", id)
 		}
 		arg := db.UpdatePostParams{
 			Link:    sql.NullString{String: id, Valid: true},

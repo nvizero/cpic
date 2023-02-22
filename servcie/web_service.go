@@ -20,7 +20,7 @@ type SiteInfo struct {
 func Handle() []model.Sex51 {
 	var collect []model.Sex51
 	var bases = []string{
-		//"https://17sex.vip/Category/4584.html",
+		"https://17sex.vip/Category/4584.html",
 		"http://51sex.vip",
 	}
 	for _, url := range bases {
@@ -41,7 +41,7 @@ func FetchMain(url string) []model.Sex51 {
 	}
 }
 
-func FetchDoc(url string, style string) []string {
+func FetchDoc(url string, style string, id string) []string {
 	if style == "51sex" {
 		url = "http://51sex.vip" + url
 	}
@@ -50,10 +50,10 @@ func FetchDoc(url string, style string) []string {
 	sbot.JContent()
 	if style == "51sex" {
 		sbot.Type = "http://51sex.vip"
-		return bot.Get51SexContent(sbot.Body)
+		return bot.Get51SexContent(sbot.Body, id)
 	} else {
 		sbot.Type = "https://17sex.vip"
-		return bot.Get17SexContent(sbot.Body)
+		return bot.Get17SexContent(sbot.Body, id)
 	}
 }
 
