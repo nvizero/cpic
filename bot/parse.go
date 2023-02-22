@@ -4,7 +4,11 @@ import (
 	"bytes"
 	"cpic/model"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -21,7 +25,7 @@ func PureContent(body []byte) string {
 }
 
 // 取內容
-func Get17SexContent(body []byte) []string {
+func Get17SexContent(body []byte, id string) []string {
 	var sexCont model.Sex51Cont
 	dom := ".artcontent"
 	doc, err := goquery.NewDocumentFromReader(bytes.NewReader(body))
@@ -35,7 +39,14 @@ func Get17SexContent(body []byte) []string {
 	doc.Find("script").Remove()
 	doc.Find("img").Each(func(i int, s *goquery.Selection) {
 		src, _ := s.Attr("src")
-		fmt.Println(src)
+		imgName := src[strings.LastIndex(src, "/")+1:]
+		if len(strings.Split(src, "/")) > 4 {
+			if strings.Contains(src, "http") {
+				downloadImg(src, imgName, id)
+			} else {
+				downloadImg("http:"+src, imgName, id)
+			}
+		}
 	})
 	sexCont.Content = doc.Find(dom).Text()
 	html, _ := doc.Find(dom).Html()
@@ -43,7 +54,7 @@ func Get17SexContent(body []byte) []string {
 	//return doc.Find(dom).Html()
 	return s
 }
-func Get51SexContent(body []byte) []string {
+func Get51SexContent(body []byte, id string) []string {
 	var sexCont model.Sex51Cont
 	dom := ".headling_wrod_main_box_edit"
 	doc, err := goquery.NewDocumentFromReader(bytes.NewReader(body))
@@ -58,7 +69,14 @@ func Get51SexContent(body []byte) []string {
 	doc.Find("#compass-fit-4302731").Remove()
 	doc.Find("img").Each(func(i int, s *goquery.Selection) {
 		src, _ := s.Attr("src")
-		fmt.Println(src)
+		imgName := src[strings.LastIndex(src, "/")+1:]
+		if len(strings.Split(src, "/")) > 4 {
+			if strings.Contains(src, "http") {
+				downloadImg(src, imgName, id)
+			} else {
+				downloadImg("http:"+src, imgName, id)
+			}
+		}
 	})
 	sexCont.Content = doc.Find(dom).Text()
 	html, _ := doc.Find(dom).Html()
@@ -134,4 +152,39 @@ func rmLink(link string) bool {
 	}
 	return fj
 
+}
+
+func downloadImg(imageUrl, imgName, dirName string) {
+	response, err := http.Get(imageUrl)
+	if err != nil {
+		fmt.Println("Error while downloading image:", err)
+		return
+	}
+	defer response.Body.Close()
+	dirPath := "imgs"
+	// 組合資料夾路徑
+	dirFullPath := filepath.Join(dirPath, dirName)
+
+	// 檢查資料夾是否存在
+	if _, err := os.Stat(dirFullPath); os.IsNotExist(err) {
+		// 資料夾不存在，建立資料夾
+		if err := os.MkdirAll(dirFullPath, 0755); err != nil {
+			log.Fatal(err)
+		}
+	} else if err != nil {
+		// 其他錯誤
+		log.Fatal(err)
+	}
+	file, err := os.Create(dirPath + "/" + dirName + "/" + imgName)
+	if err != nil {
+		fmt.Println("Error while creating file:", err)
+		return
+	}
+	defer file.Close()
+
+	_, err = io.Copy(file, response.Body)
+	if err != nil {
+		fmt.Println("Error while saving image:", err)
+		return
+	}
 }

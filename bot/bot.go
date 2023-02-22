@@ -45,16 +45,6 @@ func (c *Crawler) Fetch() *Crawler {
 }
 
 // 取內容
-func (c *Crawler) ParseContent(dom string, removeDom string) *Crawler {
-	var content []string
-	if c.Type == "17sex" {
-		content = Get17SexContent(c.Body)
-	} else {
-		content = Get51SexContent(c.Body)
-	}
-	c.Content = content[2]
-	return c
-}
 func (c *Crawler) JContent() *Crawler {
 	content := PureContent(c.Body)
 	c.Content = strings.Trim(content, "")
