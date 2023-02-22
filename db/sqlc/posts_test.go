@@ -3,7 +3,6 @@ package db
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"testing"
 	"time"
 
@@ -40,16 +39,17 @@ func TestGetPosts(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, posts)
 	require.NotEmpty(t, len(posts))
-	fmt.Println(len(posts))
 }
 
 func TestUpdatePost(t *testing.T) {
 	arg := UpdatePostParams{
-		Link:    sql.NullString{String: "https://17sex.vip/doc_NlgramdUUXlsd0pVdXcxclB5ZjFiZz09", Valid: true},
+		Link:    sql.NullString{String: "/doc_WFlBSFdaTHAvWGJXQm9BZFpmU1RZdz09", Valid: true},
+		State:   sql.NullBool{Bool: true, Valid: true},
 		Content: sql.NullString{String: util.RandomString(21), Valid: true},
 	}
 	post, err := testQueries.UpdatePost(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, post)
+	require.Equal(t, post.State.Bool, true)
 	require.NotEmpty(t, post.Content)
 }

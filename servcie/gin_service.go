@@ -41,22 +41,22 @@ func Routes(store db.Store) {
 	r.GET("/doc", func(c *gin.Context) {
 		id := c.Query("id")
 		doc := c.Query("doc")
-		var arys []string
+		var fdata []string
 		if strings.Contains(doc, "17sex") {
-			arys = FetchDoc(doc, "17sex", id)
+			fdata = FetchDoc(doc, "17sex", id)
 		} else {
-			arys = FetchDoc(doc, "51sex", id)
+			fdata = FetchDoc(doc, "51sex", id)
 		}
 		arg := db.UpdatePostParams{
-			Link:    sql.NullString{String: id, Valid: true},
+			Link:    sql.NullString{String: doc, Valid: true},
 			State:   sql.NullBool{Bool: true, Valid: true},
-			Content: sql.NullString{String: strings.TrimSpace(arys[2]), Valid: true},
+			Content: sql.NullString{String: strings.TrimSpace(fdata[2]), Valid: true},
 		}
 		store.UpdatePost(context.Background(), arg)
 		c.HTML(http.StatusOK, "doc.tmpl", gin.H{
-			"content": template.HTML(arys[2]),
-			"title":   arys[0],
-			"time":    arys[1],
+			"content": template.HTML(fdata[2]),
+			"title":   fdata[0],
+			"time":    fdata[1],
 		})
 	})
 	r.Run(":8080") // listen and serve on 0.0.0.0:8080
