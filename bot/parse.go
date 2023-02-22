@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"archive/zip"
 	"bytes"
 	"cpic/model"
 	"fmt"
@@ -23,6 +24,8 @@ func PureContent(body []byte) string {
 	content = doc.Text()
 	return content
 }
+
+var imgBase string = "https://image.xjqh1007.com/tw0625"
 
 // 取內容
 func Get17SexContent(body []byte, id string) []string {
@@ -47,7 +50,9 @@ func Get17SexContent(body []byte, id string) []string {
 				downloadImg("http:"+src, imgName, id)
 			}
 		}
+		s.SetAttr("src", imgBase+"/"+id+"/"+imgName)
 	})
+	zipDir(id)
 	sexCont.Content = doc.Find(dom).Text()
 	html, _ := doc.Find(dom).Html()
 	s := []string{title, time, html}
@@ -77,6 +82,7 @@ func Get51SexContent(body []byte, id string) []string {
 				downloadImg("http:"+src, imgName, id)
 			}
 		}
+		s.SetAttr("src", imgBase+"/"+id+"/"+imgName)
 	})
 	sexCont.Content = doc.Find(dom).Text()
 	html, _ := doc.Find(dom).Html()
@@ -186,5 +192,57 @@ func downloadImg(imageUrl, imgName, dirName string) {
 	if err != nil {
 		fmt.Println("Error while saving image:", err)
 		return
+	}
+}
+
+func zipDir(zipName string) {
+	dirp, _ := os.Getwd()
+	dir := dirp + "/imgs/" + zipName
+	zipFile, err := os.Create(zipName + ".zip") // 建立壓縮檔案
+	if err != nil {
+		panic(err)
+	}
+	defer zipFile.Close()
+
+	archive := zip.NewWriter(zipFile)
+	defer archive.Close()
+
+	// 走訪目錄下的檔案和子目錄
+	err = filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// 創建檔案或目錄的標頭
+		header, err := zip.FileInfoHeader(info)
+		if err != nil {
+			return err
+		}
+		header.Name = path
+
+		// 如果是目錄，只創建標頭即可
+		if info.IsDir() {
+			header.Name += "/"
+			header.Method = zip.Store // 目錄不需要壓縮，設定為存儲模式
+			_, err = archive.CreateHeader(header)
+			return err
+		}
+
+		// 建立檔案的標頭並寫入內容
+		header.Method = zip.Deflate // 壓縮模式
+		writer, err := archive.CreateHeader(header)
+		if err != nil {
+			return err
+		}
+		file, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+		_, err = io.Copy(writer, file)
+		return err
+	})
+	if err != nil {
+		panic(err)
 	}
 }
